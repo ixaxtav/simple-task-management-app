@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Management Application</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Task Management Application</h1>
+    </header>
+
+    <main>
+      <form id="task-form">
+        <h2>Add a Task</h2>
+        <div>
+          <label for="task-title-input">Title</label>
+          <input type="text" id="task-title-input" required />
+        </div>
+        <div>
+          <label for="description-input">Description</label>
+          <textarea id="description-input" required></textarea>
+        </div>
+        <div>
+          <label for="deadline-input">Due Date</label>
+          <input type="date" id="deadline-input" required />
+        </div>
+        <button type="submit">Add Task</button>
+      </form>
+
+      <section id="task-list">
+        <h2>Tasks</h2>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("#task-form");
+        const taskInput = document.querySelector("#task-title-input");
+        const descriptionInput = document.querySelector("#description-input");
+        const deadlineInput = document.querySelector("#deadline-input");
+        const taskList = document.querySelector("#task-list");
+
+        function addTask(event) {
+          event.preventDefault();
+
+          const taskName = taskInput.value.trim();
+          const taskDescription = descriptionInput.value.trim();
+          const deadline = deadlineInput.value.trim();
+
+          if (taskName === "" || taskDescription === "" || deadline === "") {
+            alert("Please enter both the task name and the deadline");
+            return;
+          }
+
+          const task = { name: taskName, description: taskDescription, deadline: deadline };
+
+          let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+          tasks.push(task);
+          localStorage.setItem("tasks", JSON.stringify(tasks));
+
+          taskInput.value = "";
+          descriptionInput.value = "";
+          deadlineInput.value = "";
+
+          renderTasks();
+        }
+
+        function deleteTask(index) {
+          let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+          tasks.splice(index, 1);
+          localStorage.setItem("tasks", JSON.stringify(tasks));
+
+          renderTasks();
+        }
+
+        function renderTasks() {
+          taskList.innerHTML = "";
+
+          const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+          tasks.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+
+          tasks.forEach((task, index) => {
+            const taskItem = document.createElement("div");
+            taskItem.classList.add("task");
+
+            const taskName = document.createElement("h3");
+            taskName.textContent = task.name;
+
+            const deadline = document.createElement("p");
+            deadline.textContent = `Deadline: ${task.deadline}`;
+
+            const description = document.createElement("p");
+            description.textContent = `Description: ${task.description}`;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("id", "button-delete");
+
+            deleteButton.addEventListener("click", () => deleteTask(index));
+
+            taskItem.appendChild(taskName);
+            taskItem.appendChild(deadline);
+            taskItem.appendChild(description);
+            taskItem.appendChild(deleteButton);
+
+            taskList.appendChild(taskItem);
+          });
+        }
+
+        form.addEventListener("submit", addTask);
+
+        renderTasks();
+      });
+    </script>
+  </body>
+</html>
