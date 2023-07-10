@@ -9,3 +9,6 @@ The app also provides functionality to delete tasks. Each task in the task list 
 On page load, the `renderTasks` function retrieves tasks from localStorage, sorts them based on the deadline, and dynamically generates HTML elements to display the tasks in the task list section.
 
 Overall, this app provides a simple interface for managing tasks by allowing users to add new tasks, view existing tasks, and delete tasks if needed.
+
+### DEMO:
+ https://ixaxtav.github.io/simple-task-management-app/
